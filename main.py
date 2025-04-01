@@ -2,6 +2,7 @@ import sys, os
 import enum
 from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFileDialog
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFontDatabase, QFont
 
 class Style:
     class Color(enum.Enum):
@@ -9,7 +10,15 @@ class Style:
         secondary = "#EFEFEF"
         red = "#EC5228"
         orange = "#EF9651"
-
+    class InterFont(enum.Enum):
+        REGULAR = "Inter"
+        THIN = "Inter Thin"
+        EXTRALIGHT = "Inter ExtraLight"
+        LIGHT = "Inter Light"
+        MEDIUM = "Inter Medium"
+        SEMIBOLD = "Inter SemiBold"
+        EXTRABOLD = "Inter ExtraBold"
+        BLACK = "Inter Black"
 
 class LandingApp(QMainWindow):
     def __init__(self):
@@ -18,7 +27,8 @@ class LandingApp(QMainWindow):
     
     def init_ui(self):
         self.setWindowTitle("Practice Python GUI")
-        self.setGeometry(50, 100, 400, 900)
+        self.setGeometry(50, 60, 400, 800)
+        self.setFixedSize(400, 700)
         
         central_widget = QWidget(self)
         central_widget.setStyleSheet(f"background-color: {Style.Color.secondary.value};")
@@ -26,15 +36,17 @@ class LandingApp(QMainWindow):
         
         self.layout = QVBoxLayout()
         
+        # vbox = QVBoxLayout()
+        # vbox.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.label = QLabel("TRAFFIC", self)
-        self.label.setStyleSheet(f"font-size: 20px; font-weight: bold; padding: 20px; color: {Style.Color.primary.value};")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         self.drag_drop_widget = DragDropFileWidget()
         
-        self.button = QPushButton("Let's Control", self)
-        self.button.setStyleSheet(f"background-color: {Style.Color.orange.value}; color: {Style.Color.secondary.value}; padding 10px 20px;")
+        self.button = QPushButton("GO CONTROL!", self)
         self.button.clicked.connect(self.show_file_contents)
+
+        self.setLandingStyle()
         
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.drag_drop_widget)
@@ -44,11 +56,34 @@ class LandingApp(QMainWindow):
     def show_file_contents(self):
         path = self.drag_drop_widget.get_file_path()
         if path and path is not None:
-            # print(path)
             print(f"File Path: {path}") if os.path.exists(path) else print("File not found")
         else:
             print("No file selected")
 
+    def setLandingStyle(self):
+        self.label.setStyleSheet(f"""
+            QLabel {{
+                color: {Style.Color.primary.value};
+            }}
+        """)
+
+        self.button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {Style.Color.primary.value};
+                    color: {Style.Color.secondary.value};
+                    padding: 10px 20px;
+                }}
+                QPushButton:hover {{
+                    background-color: {Style.Color.orange.value};
+                    color: {Style.Color.secondary.value};
+                }}
+                QPushButton:pressed {{
+                    background-color: #1E3A28;
+                }}
+            """)
+        
+        self.label.setFont(QFont(Style.InterFont.BLACK.value, 32))
+        self.button.setFont(QFont(Style.InterFont.EXTRABOLD.value, 24))
     
 class DragDropFileWidget(QWidget):
     def __init__(self):
@@ -112,15 +147,38 @@ class DragDropFileWidget(QWidget):
     
     def setUploadStyle(self, isValid):
         if isValid:
-            styleLabel = f"border: 2px dashed {Style.Color.primary.value}; padding: 20px; color: {Style.Color.primary.value};"
-            styleButton = f"background-color: {Style.Color.primary.value}; color: {Style.Color.secondary.value}; padding 10px 20px;" 
+            styleLabel = f"border: 2px dashed {Style.Color.primary.value}; padding: 20px; color: {Style.Color.primary.value}; background-color: white;"
+            styleButton = f"""
+                QPushButton {{
+                    background-color: {Style.Color.primary.value}; 
+                    color: {Style.Color.secondary.value}; 
+                    padding: 10px 20px;
+                }}
+                QPushButton:hover {{
+                    background-color: {Style.Color.orange.value};
+                    color: {Style.Color.secondary.value};
+                }}
+            """
         else:
-            styleLabel = f"border: 2px dashed {Style.Color.red.value}; padding: 20px; color: {Style.Color.red.value};"
-            styleButton = f"background-color: {Style.Color.red.value}; color: {Style.Color.secondary.value}; padding 10px 20px;"
+            styleLabel = f"border: 2px dashed {Style.Color.red.value}; padding: 20px; color: {Style.Color.red.value}; background-color: white;"
+            styleButton = f"""
+                QPushButton {{
+                    background-color: {Style.Color.red.value}; 
+                    color: {Style.Color.secondary.value}; 
+                    padding: 10px 20px;
+                }}
+                QPushButton:hover {{
+                    background-color: #FF7252;
+                    color: {Style.Color.secondary.value};
+                }}
+            """
 
         self.label.setStyleSheet(styleLabel)
+        self.label.setFont(QFont(Style.InterFont.REGULAR.value, 9))
         self.button.setStyleSheet(styleButton)
+        self.button.setFont(QFont(Style.InterFont.MEDIUM.value, 12))
         self.clearB.setStyleSheet(styleButton)
+        self.clearB.setFont(QFont(Style.InterFont.MEDIUM.value, 12))
       
     def set_file_path(self, file_path):
         file_path_label = None
@@ -141,10 +199,33 @@ class DragDropFileWidget(QWidget):
 
         self.setUploadStyle(True)
         self.label.setToolTip(None)
-    
+
+def setupFont():
+    inter = QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), "assets", "fonts", "Inter", "Inter-VariableFont_opsz,wght.ttf"))
+    if inter < 0: print("Error")
+
+    families = QFontDatabase.applicationFontFamilies(inter)
+    print(families)
+
+def style(app):
+    app.setStyle("Windows")
+    app.setStyleSheet(f"""
+        QPushButton {{
+            background-color: {Style.Color.primary.value};
+            color: {Style.Color.secondary.value};
+        }}
+        QPushButton:hover {{
+            background-color: {Style.Color.orange.value};
+            color: {Style.Color.secondary.value};
+        }}
+    """)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    
+    setupFont()
+    style(app)
+
     window = LandingApp()
     window.show()
     sys.exit(app.exec())
