@@ -5,6 +5,7 @@ from assets.style import style, setupFont
 from assets.enum import PageName
 
 from components.selecting import Selecting
+from components.graph import LinearGraph
 
 class MainApp(QMainWindow):
     def __init__(self):
@@ -26,7 +27,8 @@ class MainApp(QMainWindow):
         self.setGeometry(50, 60, 600, 700)
         # self.setFixedSize(600, 700)
 
-        self.current_page = Selecting(["Intersection 1", "Intersection 2", "Intersection 3"])
+        # self.current_page = Selecting(["Intersection 1", "Intersection 2", "Intersection 3"])
+        self.current_page = LinearGraph()
         self.setCentralWidget(self.current_page)
 
     def traffic_light_ui(self):
