@@ -1,11 +1,12 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QLabel
 from components.landing import LandingApp
 from assets.style import style, setupFont
 from assets.enum import PageName
 
 from components.selecting import Selecting
-from components.graph import LinearGraph
+from components.Intersection import Intersection
+from components.back_button import TriangleButton
 
 class MainApp(QMainWindow):
     def __init__(self):
@@ -28,15 +29,16 @@ class MainApp(QMainWindow):
         # self.setFixedSize(600, 700)
 
         # self.current_page = Selecting(["Intersection 1", "Intersection 2", "Intersection 3"])
-        self.current_page = LinearGraph()
+        self.current_page = Intersection()
         self.setCentralWidget(self.current_page)
+        self.current_page.switch_page_signal.connect(self.SwitchPage)
 
     def traffic_light_ui(self):
         self.setWindowTitle("Control Traffic Light")
         self.setGeometry(50, 60, 600, 700)
         # self.setFixedSize(600, 700)
 
-    def SwitchPage(self, page, details):
+    def SwitchPage(self, page, details=""):
         match page:
             case PageName.LANDING:
                 self.path = details

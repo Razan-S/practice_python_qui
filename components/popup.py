@@ -2,73 +2,81 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QPushButt
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon, QFont
 from assets.style import Style
+from assets.enum import PopupType
 
 class Popup(QMainWindow):
-    def __init__(self, message, title="Message", message_type="info"):
-        """
-        Initialize a popup window
-        
-        :param message: Text message to display
-        :param title: Window title (default: "Message")
-        :param message_type: Type of message: "info", "success", "warning", or "error"
-        """
+    def __init__(self, message, title="Message", message_type:PopupType=PopupType.INFO):
         super().__init__()
+        self.title = title
+        self.message = message
         self.message_type = message_type
-        self.init_ui(message, title)
+        self.init_ui()
 
-    def init_ui(self, message, title):
-        # Set window properties
-        self.setWindowTitle(title)
+    def init_ui(self):
+        self.setWindowTitle(self.title)
         self.setGeometry(100, 100, 300, 200)
-        self.setFixedSize(150, 100)
-        
-        # Set window flags to make it a proper popup
+
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Dialog)
-        
-        # Create central widget
+
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
-        # Create layout
         layout = QVBoxLayout(central_widget)
-        
-        
-        # Create and style message label
-        label = QLabel(message)
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setWordWrap(True)
-        font = QFont()
-        font.setPointSize(11)
-        label.setFont(font)
-        label.setStyleSheet(f"color: {Style.Color.primary.value};")
-        
-        # Create close button
-        close_button = QPushButton("OK")
-        close_button.setFixedWidth(100)
-        close_button.clicked.connect(self.close)
-        
-        # Add widgets to layout
-        layout.addStretch()
-        layout.addWidget(label)
-        layout.addStretch()
-        layout.addWidget(close_button, 0, Qt.AlignmentFlag.AlignCenter)
-        layout.addStretch(0)
-        
-    def get_style_color(self):
-        """Return the color based on message type"""
-        if self.message_type == "info":
-            return "#3498db"  # Blue
-        elif self.message_type == "success":
-            return "#2ecc71"  # Green
-        elif self.message_type == "warning":
-            return "#f39c12"  # Orange
-        elif self.message_type == "error":
-            return "#e74c3c"  # Red
-        else:
-            return "#3498db"  # Default blue
 
-# Usage examples:
-# info_popup = Popup("This is an information message", title="Information", message_type="info")
-# error_popup = Popup("Something went wrong!", title="Error", message_type="error")
-# warning_popup = Popup("This action cannot be undone", title="Warning", message_type="warning")
-# success_popup = Popup("Operation completed successfully", title="Success", message_type="success")
+        self.label = QLabel(self.message)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setWordWrap(True)
+        self.label.setFont(QFont(Style.InterFont.BLACK.value))
+     
+        self.close_button = QPushButton("OK")
+        self.close_button.setFont(QFont(Style.InterFont.BLACK.value))
+        self.close_button.setFixedWidth(100)
+        self.close_button.clicked.connect(self.close)
+
+        self.setStyle()
+
+        layout.addStretch()
+        layout.addWidget(self.label)
+        layout.addStretch()
+        layout.addWidget(self.close_button, 0, Qt.AlignmentFlag.AlignCenter)
+        layout.addStretch(0)
+
+    def setStyle(self):
+        match self.message_type:
+            case PopupType.INFO:
+                label_style = "color: black;"
+                button_bg = "black"
+                button_fg = Style.Color.secondary.value
+            case PopupType.WARNING:
+                label_style = f"color: {Style.Color.orange.value};"
+                button_bg = Style.Color.orange.value
+                button_fg = Style.Color.secondary.value
+            case PopupType.ERROR:
+                label_style = f"color: {Style.Color.red.value};"
+                button_bg = Style.Color.red.value
+                button_fg = Style.Color.secondary.value
+            case PopupType.SUCCESS:
+                label_style = f"color: {Style.Color.primary.value};"
+                button_bg = Style.Color.primary.value
+                button_fg = Style.Color.secondary.value
+            case _:
+                label_style = "color: black;"
+                button_bg = "black"
+                button_fg = Style.Color.secondary.value
+
+        button_style = f"""
+            QPushButton {{
+                background-color: {button_bg}; 
+                color: {button_fg};
+                border-radius: 5px;
+                padding: 5px;
+            }}
+            QPushButton:hover {{
+                background-color: {button_fg}; 
+                color: {button_bg};
+                border: 2px solid {button_bg};
+            }}
+        """
+
+        self.label.setStyleSheet(label_style)
+        self.close_button.setStyleSheet(button_style)

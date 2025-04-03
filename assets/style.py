@@ -23,7 +23,7 @@ def setupFont():
     if inter < 0: print("Error")
 
     families = QFontDatabase.applicationFontFamilies(inter)
-    # print(families)
+    print(families)
 
 def style(app):
     app.setStyle("Windows")
@@ -36,7 +36,8 @@ def style(app):
             color: {Style.Color.secondary.value};
         }}
         QPushButton:hover {{
-            background-color: {Style.Color.orange.value};
-            color: {Style.Color.secondary.value};
+            background-color: {Style.Color.secondary.value};
+            color: {Style.Color.primary.value};
+            border: 2px solid {Style.Color.primary.value};
         }}
     """)

@@ -3,8 +3,9 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, pyqtSignal
 from assets.style import Style
 import os
+
 from components.popup import Popup
-from assets.enum import PageName
+from assets.enum import PageName, PopupType
 
 class LandingApp(QWidget):
     switch_page_signal = pyqtSignal(PageName, str)
@@ -51,7 +52,7 @@ class LandingApp(QWidget):
         if path and path is not None:
             self.switch_page_signal.emit(PageName.INTERSECTION, path)
         else:
-            popup = Popup("Please select a SUMO config file", title="Error", message_type="error")
+            popup = Popup("Please select a SUMO config file before proceed", title="Error", message_type=PopupType.ERROR)
             popup.show()
             self.popup = popup
 
@@ -69,11 +70,13 @@ class LandingApp(QWidget):
                     padding: 10px 20px;
                 }}
                 QPushButton:hover {{
-                    background-color: {Style.Color.orange.value};
-                    color: {Style.Color.secondary.value};
+                    background-color: {Style.Color.secondary.value};
+                    color: {Style.Color.primary.value};
+                    border: 2px solid {Style.Color.primary.value};
                 }}
                 QPushButton:pressed {{
-                    background-color: #1E3A28;
+                    background-color: #2B6944;
+                    color: {Style.Color.secondary.value};
                 }}
             """)
         
@@ -150,8 +153,9 @@ class DragDropFileWidget(QWidget):
                     padding: 10px 20px;
                 }}
                 QPushButton:hover {{
-                    background-color: {Style.Color.orange.value};
-                    color: {Style.Color.secondary.value};
+                    background-color: {Style.Color.secondary.value};
+                    color: {Style.Color.primary.value};
+                    border: 2px solid {Style.Color.primary.value};
                 }}
             """
         else:
@@ -163,7 +167,7 @@ class DragDropFileWidget(QWidget):
                     padding: 10px 20px;
                 }}
                 QPushButton:hover {{
-                    background-color: #FF7252;
+                    background-color: #B33715;
                     color: {Style.Color.secondary.value};
                 }}
             """

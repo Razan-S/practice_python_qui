@@ -5,6 +5,18 @@ import pyqtgraph as pg
 import numpy as np
 import sys
 
+class Panel(QWidget):
+    def __init__(self, title="Panel", size=(50,50)):
+        super().__init__()
+        self.widsize = size
+        self.title = title
+
+        self.init_ui()
+
+    def init_ui(self):
+        self.setGeometry(0, 0, self.widsize[0], self.widsize[1])
+    
+
 class LinearGraph(QWidget):
     def __init__(self, title="Real-time Dynamic Plot", x_name="X Axis", y_name="Y Axis", size=(50,50)):
         super().__init__()
